@@ -1,0 +1,733 @@
+{
+    "info": {
+        "name": "Cruzaa Admin Panel API",
+        "description": "Complete API collection for Cruzaa backend admin panel",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost/backend",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@cruzaa.com\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Verify 2FA",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"temp_token\": \"your-temp-token\",\n  \"code\": \"123456\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/verify-2fa",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "verify-2fa"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Profile",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/auth/profile",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "profile"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Setup 2FA",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "{{base_url}}/auth/setup-2fa",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "setup-2fa"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Enable 2FA",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"code\": \"123456\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/enable-2fa",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "enable-2fa"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Products",
+            "item": [
+                {
+                    "name": "List Products",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/products?page=1&limit=20",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Product",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Product",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Test Product",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "test-product",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "price",
+                                    "value": "99.99",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Product description",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "1",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "stock_quantity",
+                                    "value": "100",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "featured_image",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "images[]",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Product",
+                    "request": {
+                        "method": "PUT",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Updated Product",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "price",
+                                    "value": "149.99",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Product",
+                    "request": {
+                        "method": "DELETE",
+                        "url": {
+                            "raw": "{{base_url}}/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "products",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Categories",
+            "item": [
+                {
+                    "name": "List Categories",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "categories"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Category",
+                    "request": {
+                        "method": "POST",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "E-Bikes",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "e-bikes",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Electric bikes",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "categories"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Contact Forms",
+            "item": [
+                {
+                    "name": "Submit Contact Form (Public)",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"subject\": \"Inquiry\",\n  \"message\": \"Hello, I need more information...\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/contact",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "contact"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "List Contact Submissions",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/contact",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "contact"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Contact Status",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"resolved\",\n  \"is_replied\": 1,\n  \"notes\": \"Contacted customer via email\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/contact/1/status",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "contact",
+                                "1",
+                                "status"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Dynamic Content",
+            "item": [
+                {
+                    "name": "Get Content by Key (Public)",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/content/homepage_hero_title",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "content",
+                                "homepage_hero_title"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Content by Group (Public)",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/content/group/homepage",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "content",
+                                "group",
+                                "homepage"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create/Update Content",
+                    "request": {
+                        "method": "POST",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "content_key",
+                                    "value": "hero_title",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "content_type",
+                                    "value": "text",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "content_value",
+                                    "value": "Welcome to Cruzaa",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "content_group",
+                                    "value": "homepage",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/content",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "content"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Settings",
+            "item": [
+                {
+                    "name": "Get All Settings",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/settings",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settings"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Public Settings",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/settings/public",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settings",
+                                "public"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Settings",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"site_name\": \"Cruzaa E-Mobility\",\n  \"contact_email\": \"info@cruzaa.com\",\n  \"smtp_enabled\": \"1\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/settings",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "settings"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Navigation",
+            "item": [
+                {
+                    "name": "Get Navigation (Public)",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/navigation?location=header",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "navigation"
+                            ],
+                            "query": [
+                                {
+                                    "key": "location",
+                                    "value": "header"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Navigation Item",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Home\",\n  \"url\": \"/\",\n  \"menu_location\": \"header\",\n  \"sort_order\": 0\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/navigation",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "navigation"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Stripe",
+            "item": [
+                {
+                    "name": "Get Publishable Key",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/stripe/publishable-key",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "stripe",
+                                "publishable-key"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Checkout Session",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"items\": [\n    {\n      \"name\": \"E-Bike Pro\",\n      \"price\": 999.99,\n      \"quantity\": 1,\n      \"image\": \"https://example.com/image.jpg\"\n    }\n  ],\n  \"email\": \"customer@example.com\",\n  \"success_url\": \"https://yoursite.com/success\",\n  \"cancel_url\": \"https://yoursite.com/cancel\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/stripe/create-checkout-session",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "stripe",
+                                "create-checkout-session"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Payment Methods",
+            "item": [
+                {
+                    "name": "List Payment Methods",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/payment-methods",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payment-methods"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Payment Method",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"PayPal\",\n  \"code\": \"paypal\",\n  \"description\": \"Pay with PayPal\",\n  \"is_active\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payment-methods",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "payment-methods"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

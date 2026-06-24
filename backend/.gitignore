@@ -1,0 +1,45 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore environment files
+.env
+
+# Ignore vendor directory
+vendor/
+composer.lock
+
+# Ignore uploaded files
+uploads/*
+!uploads/.gitkeep
+
+# Ignore log files
+logs/*
+!logs/.gitkeep
+*.log
+
+# Ignore cache
+cache/
+*.cache
+
+# Ignore temporary files
+tmp/
+temp/
+*.tmp
+
+# Ignore OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
