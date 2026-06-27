@@ -179,6 +179,7 @@ class StripeController
         echo json_encode(['status' => 'success']);
         exit();
     }
+    
 
     /**
      * Handle successful payment

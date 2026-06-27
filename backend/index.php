@@ -413,9 +413,8 @@ try {
             $controller->getPaymentMethods();
         } else if (($parts[1] ?? '') === 'place-order' && $method === 'POST') {
             $controller->placeOrder();
-            // } 
-        } else if (($parts[1] ?? '') === 'create-checkout-session' && $method === 'POST') {
-            $controller->createCheckoutSession();
+        } else if (($parts[1] ?? '') === 'create-payment-intent' && $method === 'POST') {
+            $controller->createPaymentIntent();
         } else {
             Response::notFound();
         }
