@@ -11,10 +11,10 @@ const isLocal =
   (window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1");
 // export const API_BASE_URL = isLocal ? 'http://localhost/backend' : 'https://cruzaa.com/backend';
-export const API_BASE_URL = isLocal ? 'https://api-cruzaa.kaziomar.me/backend' : 'https://api-cruzaa.kaziomar.me/backend';
-// export const API_BASE_URL = isLocal
-//   ? "http://localhost:8000/backend"
-//   : "https://cruzaa.com/backend";
+// export const API_BASE_URL = isLocal ? 'https://api-cruzaa.kaziomar.me/backend' : 'https://api-cruzaa.kaziomar.me/backend';
+export const API_BASE_URL = isLocal
+  ? "http://localhost:8000/backend"
+  : "https://cruzaa.com/backend";
 
 // Create axios instance with default config
 export const api = axios.create({

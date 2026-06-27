@@ -221,11 +221,11 @@ const HeroSlider = () => {
       </div>
 
       {/* Slide Counter */}
-      <div className="absolute bottom-8 right-4 md:right-8 z-50 text-white/60 text-xs sm:text-sm font-medium">
+      {/* <div className="absolute bottom-8 right-4 md:right-8 z-50 text-white/60 text-xs sm:text-sm font-medium">
         <span className="text-white">{String(currentSlide + 1).padStart(2, "0")}</span>
         <span className="mx-2">/</span>
         <span>{String(slides.length).padStart(2, "0")}</span>
-      </div>
+      </div> */}
 
       {/* Progress Bar */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-50">
