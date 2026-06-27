@@ -1,12 +1,13 @@
 <?php
-$allowed_origins = ['https://cruzaa.kaziomar.me'];
+$allowed_origins = ['https://cruzaa.kaziomar.me', 'http://localhost:8080', 'https://cruzaa.com'];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
 }
 header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Authorization, X-Requested-With");
+// header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {

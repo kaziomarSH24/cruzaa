@@ -1,29 +1,59 @@
 <?php
+
 /**
  * Authentication Middleware
  */
 class AuthMiddleware
 {
+    /**
+     * Helper function to extract Authorization header safely (Nginx & Apache compatible)
+     */
+    private static function getBearerToken()
+    {
+        $headers = null;
+
+        if (isset($_SERVER['HTTP_X_AUTHORIZATION'])) {
+            $headers = trim($_SERVER['HTTP_X_AUTHORIZATION']);
+        }
+        else if (isset($_SERVER['Authorization'])) {
+            $headers = trim($_SERVER["Authorization"]);
+        }
+        // Nginx/FastCGI HTTP_AUTHORIZATION 
+        else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+        }
+        // ৪. Fallback for Apache
+        elseif (function_exists('apache_request_headers')) {
+            $requestHeaders = apache_request_headers();
+            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+            if (isset($requestHeaders['X-Authorization'])) {
+                $headers = trim($requestHeaders['X-Authorization']);
+            } elseif (isset($requestHeaders['Authorization'])) {
+                $headers = trim($requestHeaders['Authorization']);
+            }
+        }
+
+        // Extract token from "Bearer <token>"
+        if (!empty($headers)) {
+            if (preg_match('/Bearer\s+(.*)$/i', $headers, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Verify JWT token and authenticate user
      */
     public static function authenticate()
     {
-        $headers = getallheaders();
+        // Use our new powerful token extractor
+        $token = self::getBearerToken();
 
-        if (!isset($headers['Authorization'])) {
+        if (!$token) {
             Response::unauthorized('No authorization token provided');
         }
-
-        $authHeader = $headers['Authorization'];
-
-        // Extract token from "Bearer <token>"
-        if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-            Response::unauthorized('Invalid authorization format');
-        }
-
-        $token = $matches[1];
 
         try {
             $payload = JWT::decode($token);
@@ -44,7 +74,6 @@ class AuthMiddleware
             $GLOBALS['current_user'] = $user;
 
             return $user;
-
         } catch (Exception $e) {
             Response::unauthorized('Invalid or expired token: ' . $e->getMessage());
         }
@@ -88,16 +117,12 @@ class AuthMiddleware
         if (self::getCurrentUser())
             return true;
 
-        $headers = getallheaders();
-        if (!isset($headers['Authorization']))
-            return false;
+        $token = self::getBearerToken();
 
-        $authHeader = $headers['Authorization'];
-        if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches))
+        if (!$token)
             return false;
 
         try {
-            $token = $matches[1];
             $payload = JWT::decode($token);
             $db = (new Database())->getConnection();
             $stmt = $db->prepare("SELECT id FROM admin_users WHERE id = :id AND is_active = 1");
