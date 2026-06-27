@@ -45,22 +45,40 @@ const Checkout = () => {
   const shipping = (threshold > 0 && subtotal >= threshold) ? 0 : baseShipping;
   const total = subtotal + shipping;
 
+  // useEffect(() => {
+  //   if (['stripe', 'klarna'].includes(selectedPaymentMethod) && total > 0 && step === 3) {
+  //     const createPI = async () => {
+  //       try {
+  //         const res = await api.post('/checkout/create-payment-intent', {
+  //           amount: total,
+  //           payment_method: selectedPaymentMethod   // tells backend which Stripe method type
+  //         });
+  //         setClientSecret(res.data.data.clientSecret);
+  //       } catch (e) {
+  //         toast.error("Failed to initialize payment");
+  //       }
+  //     };
+  //     createPI();
+  //   }
+  // }, [selectedPaymentMethod, total, step]);
+
   useEffect(() => {
     if (['stripe', 'klarna'].includes(selectedPaymentMethod) && total > 0 && step === 3) {
-      const createPI = async () => {
+      const createSession = async () => {
         try {
-          const res = await api.post('/checkout/create-payment-intent', {
+          const res = await api.post('/checkout/create-checkout-session', {
             amount: total,
-            payment_method: selectedPaymentMethod   // tells backend which Stripe method type
+            email: formData.email, // Klarna
+            return_url: `${window.location.origin}/order-success`
           });
           setClientSecret(res.data.data.clientSecret);
         } catch (e) {
           toast.error("Failed to initialize payment");
         }
       };
-      createPI();
+      createSession();
     }
-  }, [selectedPaymentMethod, total, step]);
+  }, [selectedPaymentMethod, total, step, formData.email]);
 
   useEffect(() => {
     const fetchMethods = async () => {

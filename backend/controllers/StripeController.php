@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stripe Payment Controller - Checkout Integration
  */
@@ -102,7 +103,6 @@ class StripeController
                 'session_id' => $mockSession['id'],
                 'checkout_url' => $mockSession['url']
             ], 'Checkout session created successfully');
-
         } catch (Exception $e) {
             Response::serverError('Failed to create checkout session: ' . $e->getMessage());
         }
@@ -111,9 +111,13 @@ class StripeController
     /**
      * Handle Stripe Webhook
      */
+    /**
+     * Handle Stripe Webhook (Production Ready)
+     */
     public function webhook()
     {
         $payload = @file_get_contents('php://input');
+        $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
         $event = null;
 
         try {
@@ -122,42 +126,58 @@ class StripeController
             $stmt->execute();
             $webhookSecret = $stmt->fetchColumn();
 
-            // Verify webhook signature
-            // $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-            // $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
-
-            // For demo, just decode the payload
-            $event = json_decode($payload, true);
-
-            // Handle different event types
-            switch ($event['type'] ?? '') {
-                case 'checkout.session.completed':
-                    // Payment successful
-                    $session = $event['data']['object'];
-                    $this->handleSuccessfulPayment($session);
-                    break;
-
-                case 'payment_intent.succeeded':
-                    // Payment succeeded
-                    break;
-
-                case 'payment_intent.payment_failed':
-                    // Payment failed
-                    break;
-
-                default:
-                    // Unexpected event type
-                    break;
+            if (empty($webhookSecret)) {
+                throw new Exception("Webhook secret is missing in settings.");
             }
 
-            http_response_code(200);
-            echo json_encode(['status' => 'success']);
-
-        } catch (Exception $e) {
+            // Verify webhook signature
+            $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
+        } catch (\UnexpectedValueException $e) {
+            // Invalid payload
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid payload']);
+            exit();
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid signature']);
+            exit();
+        } catch (\Exception $e) {
+            // Other errors
             http_response_code(400);
             echo json_encode(['error' => $e->getMessage()]);
+            exit();
         }
-        exit;
+
+        // Handle different event types (Using Object notation since constructEvent returns an object)
+        switch ($event->type) {
+            case 'checkout.session.completed':
+                // Payment successful
+                $session = $event->data->object;
+                $this->handleSuccessfulPayment($session);
+                break;
+
+            case 'payment_intent.succeeded':
+                // Payment succeeded
+                $paymentIntent = $event->data->object;
+                // Add any logic if needed
+                break;
+
+            case 'payment_intent.payment_failed':
+                // Payment failed
+                $paymentIntent = $event->data->object;
+                // Add any logic if needed
+                break;
+
+            default:
+                // Unexpected event type
+                error_log('Received unknown Stripe event type: ' . $event->type);
+                break;
+        }
+
+        http_response_code(200);
+        echo json_encode(['status' => 'success']);
+        exit();
     }
 
     /**

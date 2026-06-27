@@ -413,10 +413,19 @@ try {
             $controller->getPaymentMethods();
         } else if (($parts[1] ?? '') === 'place-order' && $method === 'POST') {
             $controller->placeOrder();
-        } else if (($parts[1] ?? '') === 'create-payment-intent' && $method === 'POST') {
-            $controller->createPaymentIntent();
+            // } 
+        } else if (($parts[1] ?? '') === 'create-checkout-session' && $method === 'POST') {
+            $controller->createCheckoutSession();
         } else {
             Response::notFound();
+        }
+    }
+
+    // STRIPE WEBHOOK ROUTE
+    else if ($parts[0] === 'stripe' && ($parts[1] ?? '') === 'webhook') {
+        $controller = new StripeController();
+        if ($method === 'POST') {
+            $controller->webhook();
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Public Checkout Controller
  */
@@ -138,7 +139,6 @@ class CheckoutController
                 'order_id' => (int) $orderId,
                 'order_number' => (string) $orderNumber
             ], 'Order placed successfully');
-
         } catch (\Exception $e) {
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
@@ -157,19 +157,89 @@ class CheckoutController
     /**
      * Create a Stripe PaymentIntent
      */
-    public function createPaymentIntent()
+    // public function createPaymentIntent()
+    // {
+    //     $data = json_decode(file_get_contents("php://input"), true);
+    //     $amount = $data['amount'] ?? 0;
+
+    //     if ($amount <= 0) {
+    //         Response::error('Invalid amount', 400);
+    //     }
+
+    //     // Get Stripe Secret Key
+    //     $stmt = $this->db->prepare("SELECT setting_value FROM settings WHERE setting_key = 'stripe_secret_key'");
+    //     $stmt->execute();
+    //     $secretKey = $stmt->fetchColumn();
+
+    //     if (empty($secretKey)) {
+    //         Response::error('Stripe is not configured', 500);
+    //     }
+
+    //     try {
+    //         \Stripe\Stripe::setApiKey($secretKey);
+
+    //         $paymentMethodTypes = $data['payment_method'] === 'klarna' ? ['klarna'] : null;
+
+    //         $piParams = [
+    //             'amount'   => round($amount * 100),
+    //             'currency' => 'gbp',
+    //             'automatic_payment_methods' => ['enabled' => true],
+    //             'metadata' => [
+    //                 'integration'  => 'cruzaa_checkout',
+    //                 'amount_gbp'   => $amount,
+    //                 'payment_type' => $data['payment_method'] ?? 'stripe',
+    //             ],
+    //         ];
+
+    //         $paymentIntent = \Stripe\PaymentIntent::create($piParams);
+
+    //         error_log("PaymentIntent created: " . $paymentIntent->id . " for amount: £" . $amount);
+
+    //         Response::success([
+    //             'clientSecret' => $paymentIntent->client_secret,
+    //             'paymentIntentId' => $paymentIntent->id
+    //         ]);
+    //     } catch (\Stripe\Exception\CardException $e) {
+    //         error_log("Stripe Card Error: " . $e->getMessage());
+    //         Response::error('Card error: ' . $e->getMessage(), 400);
+    //     } catch (\Stripe\Exception\InvalidRequestException $e) {
+    //         error_log("Stripe Invalid Request: " . $e->getMessage());
+    //         Response::error('Invalid request: ' . $e->getMessage(), 400);
+    //     } catch (\Stripe\Exception\AuthenticationException $e) {
+    //         error_log("Stripe Auth Error: " . $e->getMessage());
+    //         Response::error('Authentication failed. Check Stripe keys.', 500);
+    //     } catch (Exception $e) {
+    //         error_log("Stripe Error: " . $e->getMessage());
+    //         Response::serverError('Payment system error: ' . $e->getMessage());
+    //     }
+    // }
+
+    public function createCheckoutSession()
     {
         $data = json_decode(file_get_contents("php://input"), true);
         $amount = $data['amount'] ?? 0;
+        $email = $data['email'] ?? null;
+        $returnUrl = $data['return_url'] ?? '';
 
         if ($amount <= 0) {
             Response::error('Invalid amount', 400);
         }
 
-        // Get Stripe Secret Key
-        $stmt = $this->db->prepare("SELECT setting_value FROM settings WHERE setting_key = 'stripe_secret_key'");
+        $stmt = $this->db->prepare("
+            SELECT setting_key, setting_value 
+            FROM settings 
+            WHERE setting_key IN ('stripe_secret_key', 'currency')
+        ");
         $stmt->execute();
-        $secretKey = $stmt->fetchColumn();
+
+        $settings = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+        }
+
+        $secretKey = $settings['stripe_secret_key'] ?? '';
+        
+        $currency = strtolower($settings['currency'] ?? 'gbp');
 
         if (empty($secretKey)) {
             Response::error('Stripe is not configured', 500);
@@ -178,36 +248,33 @@ class CheckoutController
         try {
             \Stripe\Stripe::setApiKey($secretKey);
 
-            $paymentMethodTypes = $data['payment_method'] === 'klarna' ? ['klarna'] : null;
-
-            $piParams = [
-                'amount'   => round($amount * 100),
-                'currency' => 'gbp',
-                'automatic_payment_methods' => ['enabled' => true],
-                'metadata' => [
-                    'integration'  => 'cruzaa_checkout',
-                    'amount_gbp'   => $amount,
-                    'payment_type' => $data['payment_method'] ?? 'stripe',
-                ],
+            $sessionParams = [
+                'ui_mode' => 'elements',
+                'return_url' => $returnUrl,
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => $currency, 
+                        'product_data' => [
+                            'name' => 'Cruzaa Store Order',
+                        ],
+                        'unit_amount' => round($amount * 100), 
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
             ];
 
-            $paymentIntent = \Stripe\PaymentIntent::create($piParams);
+            
+            if ($email) {
+                $sessionParams['customer_email'] = $email;
+            }
 
-            error_log("PaymentIntent created: " . $paymentIntent->id . " for amount: £" . $amount);
+            $session = \Stripe\Checkout\Session::create($sessionParams);
 
             Response::success([
-                'clientSecret' => $paymentIntent->client_secret,
-                'paymentIntentId' => $paymentIntent->id
+                'clientSecret' => $session->client_secret,
+                'sessionId' => $session->id
             ]);
-        } catch (\Stripe\Exception\CardException $e) {
-            error_log("Stripe Card Error: " . $e->getMessage());
-            Response::error('Card error: ' . $e->getMessage(), 400);
-        } catch (\Stripe\Exception\InvalidRequestException $e) {
-            error_log("Stripe Invalid Request: " . $e->getMessage());
-            Response::error('Invalid request: ' . $e->getMessage(), 400);
-        } catch (\Stripe\Exception\AuthenticationException $e) {
-            error_log("Stripe Auth Error: " . $e->getMessage());
-            Response::error('Authentication failed. Check Stripe keys.', 500);
         } catch (Exception $e) {
             error_log("Stripe Error: " . $e->getMessage());
             Response::serverError('Payment system error: ' . $e->getMessage());
