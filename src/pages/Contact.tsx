@@ -226,7 +226,7 @@ const Contact = () => {
       </section>
 
       {/* Live Chat CTA */}
-      <section className="py-16 bg-secondary/30">
+      <section className="py-10 bg-secondary/30">
         <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

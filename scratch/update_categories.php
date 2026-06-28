@@ -5,7 +5,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $categories = [
     ['id' => 3, 'name' => 'E-SCOOTERS', 'slug' => 'e-scooters'],
     ['id' => 5, 'name' => 'E-BIKES', 'slug' => 'e-byke'],
-    ['id' => 6, 'name' => 'The Official Cruzaa Limited Edition E Scooters', 'slug' => 'cruzaa-scoota']
+    ['id' => 6, 'name' => 'The Official Cruzaa Limited Edition EScooters', 'slug' => 'cruzaa-scoota']
 ];
 
 $stmt = $db->prepare("UPDATE categories SET name = ?, slug = ? WHERE id = ?");

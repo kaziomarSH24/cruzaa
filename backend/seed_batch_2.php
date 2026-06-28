@@ -123,9 +123,10 @@ try {
 
     foreach ($products as $p) {
         $slug = slugify($p['name']);
-        
-        $stmt = $db->prepare("INSERT INTO products (name, slug, category_id, price, sale_price, description, short_description, stock_quantity, sku, specs, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)");
-        
+        $specs = json_encode($p['specs']);
+
+        $stmt = $db->prepare("\n            INSERT INTO products (name, slug, category_id, price, sale_price, description, short_description, stock_quantity, sku, specs, is_active)\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)\n            ON DUPLICATE KEY UPDATE\n                name = VALUES(name),\n                category_id = VALUES(category_id),\n                price = VALUES(price),\n                sale_price = VALUES(sale_price),\n                description = VALUES(description),\n                short_description = VALUES(short_description),\n                stock_quantity = VALUES(stock_quantity),\n                specs = VALUES(specs),\n                is_active = VALUES(is_active)\n        ");
+
         $stmt->execute([
             $p['name'],
             $slug,
@@ -136,10 +137,10 @@ try {
             $p['short_description'],
             $p['stock_quantity'],
             $p['sku'],
-            json_encode($p['specs'])
+            $specs
         ]);
-        
-        echo "Inserted: " . $p['name'] . "\n";
+
+        echo "Upserted: " . $p['name'] . "\n";
     }
 
     echo "Successfully seeded " . count($products) . " products.\n";
