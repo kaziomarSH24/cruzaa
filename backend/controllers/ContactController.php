@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../utils/MailHelper.php';
+
 /**
  * Contact Controller - Handle Contact Form Submissions
  */
@@ -143,10 +145,131 @@ class ContactController
 
             $stmt->execute();
 
-            // TODO: Send email notification to admin
+            // Send email notification to admin
+            $to = "hi@cruzaa.com";
+
+            // Set the email subject securely
+            $emailSubject = "New Contact Form Submission: " . htmlspecialchars($data['subject']);
+
+            // Extract and sanitize form data to prevent XSS
+            $senderName = htmlspecialchars($data['name']);
+            $senderEmail = htmlspecialchars($data['email']);
+            $senderMessage = htmlspecialchars($data['message']);
+
+            // Avatar initials
+            $nameParts = explode(' ', trim($senderName));
+            $initials = strtoupper(substr($nameParts[0], 0, 1));
+            if (count($nameParts) > 1) {
+                $initials .= strtoupper(substr(end($nameParts), 0, 1));
+            }
+
+            $emailBody = <<<HTML
+<div style="margin:0;padding:40px 16px;background-color:#f3f4f6;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:#E8191A;padding:32px 40px;text-align:center;">
+              <div style="font-size:28px;font-weight:700;color:#ffffff;letter-spacing:3px;">CRUZAA</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.75);letter-spacing:2px;text-transform:uppercase;margin-top:6px;">E-Commerce Platform</div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px;">
+
+              <!-- Badge -->
+              <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">
+                <tr>
+                  <td style="background:#FEE2E2;border-radius:20px;padding:5px 14px;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="width:8px;height:8px;background:#E8191A;border-radius:50%;font-size:0;">&nbsp;</td>
+                        <td style="padding-left:6px;font-size:12px;font-weight:600;color:#991B1B;white-space:nowrap;">New contact form submission</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Greeting -->
+              <div style="font-size:22px;font-weight:600;color:#111827;margin-bottom:10px;">Hello, Admin &#x1F44B;</div>
+              <p style="font-size:14px;color:#6b7280;line-height:1.7;margin:0 0 28px 0;">You've received a new message through the contact form on your website. Here's what was submitted:</p>
+
+              <!-- Sender Card -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:12px;background:#f9fafb;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <!-- Avatar -->
+                        <td style="width:48px;height:48px;">
+                          <div style="width:48px;height:48px;background:#E8191A;border-radius:50%;text-align:center;line-height:48px;font-size:18px;font-weight:700;color:#ffffff;">{$initials}</div>
+                        </td>
+                        <!-- Name & Email -->
+                        <td style="padding-left:16px;">
+                          <div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px;">{$senderName}</div>
+                          <a href="mailto:{$senderEmail}" style="font-size:13px;color:#E8191A;text-decoration:none;">{$senderEmail}</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Message Box -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+                <!-- Message Header -->
+                <tr>
+                  <td style="background:#f9fafb;padding:14px 24px;border-bottom:1px solid #e5e7eb;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="width:8px;height:8px;background:#E8191A;border-radius:50%;font-size:0;">&nbsp;</td>
+                        <td style="padding-left:8px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Message</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <!-- Message Content -->
+                <tr>
+                  <td style="padding:24px;font-size:14px;line-height:1.8;color:#4b5563;white-space:pre-wrap;background:#ffffff;">{$senderMessage}</td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#f9fafb;padding:20px 40px;text-align:center;border-top:1px solid #e5e7eb;">
+              <p style="font-size:12px;color:#9ca3af;line-height:1.6;margin:0;">
+                <strong style="color:#6b7280;">&copy; Cruzaa E-Commerce</strong><br>
+                This is an automated notification &mdash; please do not reply to this email.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+HTML;
+
+            // Call the utility function to send the email
+            // Ensure $this->sendSmtpEmail or sendSmtpEmail is called correctly based on your class structure
+            $isSent = sendSmtpEmail($this->db, $to, $emailSubject, $emailBody);
+
+            if (!$isSent) {
+                // Log error if email fails to send
+                error_log("Contact form saved, but HTML email notification failed to send.");
+            }
 
             Response::success(null, 'Thank you for contacting us! We will get back to you soon.', 201);
-
         } catch (Exception $e) {
             Response::serverError('Failed to submit contact form: ' . $e->getMessage());
         }
@@ -188,7 +311,6 @@ class ContactController
             $this->logActivity($user['id'], 'update_contact_status', 'contact_submissions', $id);
 
             Response::success(null, 'Status updated successfully');
-
         } catch (Exception $e) {
             Response::serverError('Failed to update status: ' . $e->getMessage());
         }
