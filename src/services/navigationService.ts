@@ -18,6 +18,26 @@ export interface NavigationItem {
 
 class NavigationService {
     /**
+     * Normalize internal navigation URLs so React Router treats them as absolute.
+     */
+    private normalizeHref(url?: string): string {
+        if (!url) return '#';
+
+        if (
+            url.startsWith('/') ||
+            url.startsWith('http://') ||
+            url.startsWith('https://') ||
+            url.startsWith('mailto:') ||
+            url.startsWith('tel:') ||
+            url.startsWith('#')
+        ) {
+            return url;
+        }
+
+        return `/${url.replace(/^\/+/, '')}`;
+    }
+
+    /**
      * Get navigation tree by location (active only)
      */
     async getNavigation(location: string = 'header'): Promise<NavigationItem[]> {
@@ -63,7 +83,7 @@ class NavigationService {
         return {
             ...item,
             name: item.title,
-            href: item.url || '#',
+            href: this.normalizeHref(item.url),
             children: item.children ? item.children.map(c => this.mapItem(c)) : undefined
         };
     }

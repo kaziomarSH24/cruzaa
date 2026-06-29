@@ -5,16 +5,16 @@
  */
 class Database
 {
-    private $host = "localhost";
-    private $db_name = "cruzaa_admin";
-    private $username = "root";
-    private $password = "";
-    public $conn;
-    // private $host = "mysql-200-138.mysql.prositehosting.net";
+    // private $host = "localhost";
     // private $db_name = "cruzaa_admin";
-    // private $username = "cruzaa_urser";
-    // private $password = "cruz@a_db123";
+    // private $username = "root";
+    // private $password = "";
     // public $conn;
+    private $host = "mysql-200-138.mysql.prositehosting.net";
+    private $db_name = "cruzaa_admin";
+    private $username = "cruzaa_urser";
+    private $password = "cruz@a_db123";
+    public $conn;
 
     /**
      * Get database connection

@@ -417,14 +417,14 @@ const ProductDetail = () => {
               </div>
 
               {/* Wishlist & Share */}
-              <div className="flex gap-3 mb-6">
+              {/* <div className="flex gap-3 mb-6">
                 <button className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-border rounded-xl hover:bg-secondary transition-all text-sm font-medium">
                   <Heart className="w-4 h-4" /> Wishlist
                 </button>
                 <button className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-border rounded-xl hover:bg-secondary transition-all text-sm font-medium">
                   <Share2 className="w-4 h-4" /> Share
                 </button>
-              </div>
+              </div> */}
 
               {/* Trust Badges 
               <div className="grid grid-cols-3 gap-2 pt-5 border-t border-border/40">

@@ -371,7 +371,7 @@ export default function PagesManagementPage() {
                                         {/* Actions */}
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <a
-                                                href={`/pages/${page.slug}`}
+                                                href={`/${page.slug}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
