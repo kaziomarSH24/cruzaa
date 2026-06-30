@@ -8,7 +8,13 @@ import ProductCard from "@/components/products/ProductCard";
 import productService, { Product } from "@/services/productService";
 import categoryService, { Category } from "@/services/categoryService";
 
-const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: string; categoryOverride?: string }) => {
+const Products = ({
+  defaultCategory,
+  categoryOverride,
+}: {
+  defaultCategory?: string;
+  categoryOverride?: string;
+}) => {
   const { category: categoryParam } = useParams();
   const activeCategory = categoryOverride || categoryParam || defaultCategory;
   const navigate = useNavigate();
@@ -27,12 +33,12 @@ const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: str
         const filterParams = {
           category_id: isNumeric ? Number(activeCategory) : undefined,
           category_slug: !isNumeric ? activeCategory : undefined,
-          limit: 100
+          limit: 100,
         };
-        
+
         const [prodRes, catRes] = await Promise.all([
           productService.getProducts(filterParams),
-          categoryService.getCategories()
+          categoryService.getCategories(),
         ]);
         setProducts(prodRes.products);
         setCategories(catRes);
@@ -45,10 +51,10 @@ const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: str
     loadData();
   }, [activeCategory]);
 
-  const currentCategory = categories.find((c) => 
-    activeCategory && !isNaN(Number(activeCategory)) 
-      ? c.id === Number(activeCategory) 
-      : c.slug === activeCategory
+  const currentCategory = categories.find((c) =>
+    activeCategory && !isNaN(Number(activeCategory))
+      ? c.id === Number(activeCategory)
+      : c.slug === activeCategory,
   );
 
   const sortedProducts = [...products].sort((a, b) => {
@@ -76,9 +82,13 @@ const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: str
 
   return (
     <Layout>
-      <SEO 
+      <SEO
         title={currentCategory ? currentCategory.name : "Products"}
-        description={currentCategory ? `Browse our collection of ${currentCategory.name}` : "Discover Cruzaa's innovative electric scooters and bikes."}
+        description={
+          currentCategory
+            ? `Browse our collection of ${currentCategory.name}`
+            : "Discover Cruzaa's innovative electric scooters and bikes."
+        }
       />
       {/* Hero */}
       <section className="pt-40 pb-20 bg-[#1A1A1A] text-white">
@@ -88,7 +98,7 @@ const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: str
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight whitespace-nowrap">
               {currentCategory ? currentCategory.name : "All Products"}
             </h1>
             <p className="text-lg text-white/70 max-w-2xl mx-auto">
@@ -109,7 +119,9 @@ const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: str
               {/* Toolbar */}
               <div className="flex items-center justify-end mb-8">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Sort By:</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">
+                    Sort By:
+                  </span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -145,8 +157,13 @@ const Products = ({ defaultCategory, categoryOverride }: { defaultCategory?: str
                 </div>
               ) : (
                 <div className="text-center py-16">
-                  <p className="text-lg text-muted-foreground mb-4">No products found in this category.</p>
-                  <Link to="/products" className="text-primary font-semibold hover:underline">
+                  <p className="text-lg text-muted-foreground mb-4">
+                    No products found in this category.
+                  </p>
+                  <Link
+                    to="/products"
+                    className="text-primary font-semibold hover:underline"
+                  >
                     View all products
                   </Link>
                 </div>

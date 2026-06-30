@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Global Configuration
  */
 
 // Handle OPTIONS preflight early if index.php didn't catch it
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }

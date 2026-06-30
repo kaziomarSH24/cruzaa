@@ -9,27 +9,38 @@ import navigationService from "@/services/navigationService";
    configures a "footer" nav menu in the CMS.
 ───────────────────────────────────────────── */
 const DEFAULT_COL1 = [
-  { name: "Home",                       href: "/" },
-  { name: "Limited Edition E Scooters", href: "/products/limited-edition-e-scooters" },
-  { name: "E Scooters",                 href: "/products/electric-scooters" },
-  { name: "E-Bikes",                    href: "/products/electric-bikes" },
-  { name: "Cruzaa Family",              href: "/cruzaa-family" },
-  { name: "Our Story",                  href: "/our-story" },
+  { name: "Home", href: "/" },
+  {
+    name: "Limited Edition E Scooters",
+    href: "/products/limited-edition-e-scooters",
+  },
+  { name: "E Scooters", href: "/products/electric-scooters" },
+  { name: "E-Bikes", href: "/products/electric-bikes" },
+  { name: "Cruzaa Family", href: "/cruzaa-family" },
+  { name: "Our Story", href: "/our-story" },
 ];
 
 const DEFAULT_COL2 = [
   { name: "Cycle to Work Scheme", href: "/cycle-to-work-scheme" },
-  { name: "Wholesale",            href: "/joinus" },
-  { name: "Contact Us",          href: "/contact" },
-  { name: "Terms & Conditions",  href: "/terms" },
-  { name: "Privacy Policy",      href: "/privacy" },
+  { name: "Wholesale", href: "/joinus" },
+  { name: "Contact Us", href: "/contact" },
+  { name: "Terms & Conditions", href: "/terms" },
+  { name: "Privacy Policy", href: "/privacy" },
 ];
 
 const SOCIAL_LINKS = [
-  { icon: Facebook,  href: "https://facebook.com/cruzaa",  label: "Facebook" },
-  { icon: Twitter,   href: "https://twitter.com/cruzaa",   label: "Twitter" },
-  { icon: Instagram, href: "https://instagram.com/cruzaa", label: "Instagram" },
-  { icon: Youtube,   href: "https://youtube.com/cruzaa",   label: "Youtube" },
+  {
+    icon: Facebook,
+    href: "https://facebook.com/cruzaa.lyf",
+    label: "Facebook",
+  },
+  // { icon: Twitter,   href: "https://twitter.com/cruzaa",   label: "Twitter" },
+  {
+    icon: Instagram,
+    href: "https://instagram.com/cruzaa_life",
+    label: "Instagram",
+  },
+  { icon: Youtube, href: "https://youtube.com/@cruzaa_life", label: "Youtube" },
 ];
 
 type NavLink = { name: string; href: string };
@@ -42,7 +53,7 @@ const toLink = (item: any): NavLink => ({
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail]       = useState("");
+  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [col1, setCol1] = useState<NavLink[]>(DEFAULT_COL1);
   const [col2, setCol2] = useState<NavLink[]>(DEFAULT_COL2);
@@ -55,7 +66,9 @@ const Footer = () => {
         if (!items || items.length === 0) return; // keep defaults
 
         // Case A: Admin has set up two parent groups → use group[0] for col1, group[1] for col2
-        const groups = items.filter((i: any) => i.children && i.children.length > 0);
+        const groups = items.filter(
+          (i: any) => i.children && i.children.length > 0,
+        );
         if (groups.length >= 2) {
           setCol1(groups[0].children.map(toLink));
           setCol2(groups[1].children.map(toLink));
@@ -64,7 +77,7 @@ const Footer = () => {
 
         // Case B: flat list of links → split into two halves
         const flat = items.flatMap((i: any) =>
-          i.children?.length ? i.children.map(toLink) : [toLink(i)]
+          i.children?.length ? i.children.map(toLink) : [toLink(i)],
         );
         if (flat.length > 0) {
           const mid = Math.ceil(flat.length / 2);
@@ -80,7 +93,10 @@ const Footer = () => {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) { setSubmitted(true); setEmail(""); }
+    if (email.trim()) {
+      setSubmitted(true);
+      setEmail("");
+    }
   };
 
   return (
@@ -96,7 +112,9 @@ const Footer = () => {
           </p>
 
           {submitted ? (
-            <p className="text-primary font-semibold text-lg">Thanks for signing up! 🎉</p>
+            <p className="text-primary font-semibold text-lg">
+              Thanks for signing up! 🎉
+            </p>
           ) : (
             <form
               onSubmit={handleSignup}
@@ -131,19 +149,27 @@ const Footer = () => {
       </div>
 
       {/* ── Main Footer ── Primary Red */}
+      {/* ── Main Footer ── Primary Red */}
       <div className="bg-primary text-white">
         <div className="container-custom py-10 sm:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-
             {/* Column 1 */}
             <ul className="space-y-2.5">
               {col1.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-white/85 hover:text-white transition-colors"
+                    className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-white/85 hover:text-white transition-colors block"
                   >
-                    {link.name}
+                    {/* Removed <br /> to allow natural flow on desktop */}
+                    {link.name.toLowerCase().includes("limited edition") ? (
+                      <>
+                        LIMITED EDITION{" "}
+                        <span className="whitespace-nowrap">E SCOOTERS</span>
+                      </>
+                    ) : (
+                      link.name
+                    )}
                   </Link>
                 </li>
               ))}
@@ -155,9 +181,17 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-white/85 hover:text-white transition-colors"
+                    className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-white/85 hover:text-white transition-colors block"
                   >
-                    {link.name}
+                    {/* Removed <br /> to allow natural flow on desktop */}
+                    {link.name.toLowerCase().includes("limited edition") ? (
+                      <>
+                        LIMITED EDITION{" "}
+                        <span className="whitespace-nowrap">E SCOOTERS</span>
+                      </>
+                    ) : (
+                      link.name
+                    )}
                   </Link>
                 </li>
               ))}
@@ -185,9 +219,19 @@ const Footer = () => {
                   Have any questions? Get in touch.
                 </p>
                 <p className="text-sm sm:text-base font-bold">
-                  <a href="tel:02033268888" className="hover:underline underline-offset-2">0203 326 8888</a>
-                  {" "}or{" "}
-                  <a href="mailto:hi@cruzaa.com" className="hover:underline underline-offset-2">hi@cruzaa.com</a>
+                  <a
+                    href="tel:02033268888"
+                    className="hover:underline underline-offset-2"
+                  >
+                    0203 326 8888
+                  </a>{" "}
+                  or{" "}
+                  <a
+                    href="mailto:hi@cruzaa.com"
+                    className="hover:underline underline-offset-2"
+                  >
+                    hi@cruzaa.com
+                  </a>
                 </p>
               </div>
             </div>
@@ -196,7 +240,6 @@ const Footer = () => {
           {/* Bottom bar */}
           <div className="border-t border-white/20 mt-10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] sm:text-xs text-white/65 font-medium uppercase tracking-wide">
             <span>Copyright ©{currentYear} Cruzaa Ltd™</span>
-            
           </div>
         </div>
       </div>

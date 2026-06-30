@@ -1,5 +1,12 @@
 <?php
-$allowed_origins = ['https://cruzaa.kaziomar.me', 'http://localhost:8080', 'https://cruzaa.com'];
+$allowed_origins = [
+    'https://cruzaa.kaziomar.me',
+    'http://localhost:8080',
+    'https://cruzaa.com',
+    'https://www.cruzaa.com',
+    'https://cruzaav2.kaziomar.me',
+    'http://localhost:8000',
+];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $allowed_origins)) {

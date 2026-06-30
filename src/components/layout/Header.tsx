@@ -256,15 +256,17 @@ const Header = () => {
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 hidden md:block ${isAccountMenuOpen ? "rotate-180" : ""}`} />
                   </button>
                 ) : (
-                  <Link
-                    to="/login"
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${isScrolled || !isHomePage
-                      ? "text-foreground/80 hover:text-primary hover:bg-secondary"
-                      : "text-white/90 hover:text-white hover:bg-white/10"
-                      }`}
-                  >
-                    <User className="w-5 h-5" />
-                  </Link>
+                  // <Link
+                  //   to="/login"
+                  //   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${isScrolled || !isHomePage
+                  //     ? "text-foreground/80 hover:text-primary hover:bg-secondary"
+                  //     : "text-white/90 hover:text-white hover:bg-white/10"
+                  //     }`}
+                  // >
+                  //   <User clas
+                  // sName="w-5 h-5" />
+                  // </Link>
+                  null
                 )}
 
                 {/* Account Dropdown */}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // useNavigate যুক্ত করা হয়েছে
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronDown } from "lucide-react";
 import contentService, { DynamicContent } from "@/services/contentService";
@@ -16,7 +16,18 @@ const InteractiveProductFeature = () => {
     const [content, setContent] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [activeId, setActiveId] = useState<number | null>(null);
-    const [selectedColor, setSelectedColor] = useState("Carbon Black");
+    const [selectedColor, setSelectedColor] = useState(""); 
+
+    const navigate = useNavigate(); 
+
+    
+    const handleColorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const targetUrl = e.target.value;
+        setSelectedColor(targetUrl);
+        if (targetUrl) {
+            navigate(targetUrl);
+        }
+    };
 
     useEffect(() => {
         const fetchContent = async () => {
@@ -158,13 +169,14 @@ const InteractiveProductFeature = () => {
                                     <div className="relative group/select">
                                         <select
                                             value={selectedColor}
-                                            onChange={(e) => setSelectedColor(e.target.value)}
+                                            onChange={handleColorChange}
                                             className="bg-white text-black text-[10px] md:text-[11px] font-black px-8 py-2.5 rounded-full tracking-[0.1em] uppercase appearance-none cursor-pointer focus:outline-none border-none pr-12 shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:bg-gray-100 transition-all duration-300"
                                         >
-                                            <option value="Carbon Black">Carbon Black</option>
-                                            <option value="Denim Blue">Denim Blue</option>
-                                            <option value="Magno Green">Magno Green</option>
-                                            <option value="Racing White">Racing White</option>
+                                            <option value="" disabled>Select a color</option>
+                                            <option value="/product/the-cruzaa-e-scooter-carbon-black-sale">Carbon Black</option>
+                                            <option value="/product/the-cruzaa-limited-edition-denim-blue-sale">Denim Blue</option>
+                                            <option value="/product/the-cruzaa-limited-edition-magno-green-sale">Magno Green</option>
+                                            <option value="/product/the-cruzaa-e-scooter-racing-white-sale">Racing White</option>
                                         </select>
                                         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
                                             <ChevronDown className="w-3.5 h-3.5 text-black" />

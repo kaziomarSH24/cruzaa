@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Product Controller - Complete CRUD
  */
@@ -32,7 +33,7 @@ class ProductController
         $params = [];
 
         if (!empty($search)) {
-            $where[] = "(name LIKE :search OR sku LIKE :search OR description LIKE :search)";
+            $where[] = "(p.name LIKE :search OR p.sku LIKE :search OR p.description LIKE :search)";
             $params[':search'] = "%{$search}%";
         }
 
@@ -262,7 +263,6 @@ class ProductController
             $this->logActivity($user['id'], 'create_product', 'products', $productId);
 
             Response::success(['id' => $productId], 'Product created successfully', 201);
-
         } catch (Exception $e) {
             $this->db->rollBack();
             Response::serverError('Failed to create product: ' . $e->getMessage());
@@ -396,7 +396,6 @@ class ProductController
             $this->logActivity($user['id'], 'update_product', 'products', $id);
 
             Response::success(['id' => $id], 'Product updated successfully');
-
         } catch (Exception $e) {
             $this->db->rollBack();
             Response::serverError('Failed to update product: ' . $e->getMessage());
@@ -459,7 +458,6 @@ class ProductController
             $this->logActivity($user['id'], 'duplicate_product', 'products', $newId);
 
             Response::success(['id' => $newId], 'Product duplicated successfully');
-
         } catch (Exception $e) {
             if ($this->db->inTransaction())
                 $this->db->rollBack();
@@ -504,7 +502,6 @@ class ProductController
             $this->logActivity($user['id'], 'delete_product', 'products', $id);
 
             Response::success(null, 'Product deleted successfully');
-
         } catch (Exception $e) {
             Response::serverError('Failed to delete product: ' . $e->getMessage());
         }
