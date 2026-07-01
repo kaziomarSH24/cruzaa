@@ -91,7 +91,7 @@ const Products = ({
         }
       />
       {/* Hero */}
-      <section className="pt-20 pb-20 bg-[#1A1A1A] text-white">
+      <section className="pt-10 pb-10 bg-[#1A1A1A] text-white">
         <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

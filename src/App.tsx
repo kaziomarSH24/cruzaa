@@ -54,6 +54,7 @@ import TestimonialManagementPage from "./pages/admin/TestimonialManagementPage";
 import NewsletterManagementPage from "./pages/admin/NewsletterManagementPage";
 import PagesManagementPage from "./pages/admin/PagesManagementPage";
 import DynamicPage from "./pages/DynamicPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
           <BrowserRouter
             future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
           >
+            <ScrollToTop />
             <AdminAuthProvider>
               <TrackingPixels />
               <DynamicMeta />
