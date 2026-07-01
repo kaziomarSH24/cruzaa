@@ -91,14 +91,14 @@ const Products = ({
         }
       />
       {/* Hero */}
-      <section className="pt-40 pb-20 bg-[#1A1A1A] text-white">
+      <section className="pt-20 pb-20 bg-[#1A1A1A] text-white">
         <div className="container-custom text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight whitespace-nowrap">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 uppercase tracking-tight lg:whitespace-nowrap">
               {currentCategory ? currentCategory.name : "All Products"}
             </h1>
             <p className="text-lg text-white/70 max-w-2xl mx-auto">

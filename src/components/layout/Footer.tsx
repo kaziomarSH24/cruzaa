@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import navigationService from "@/services/navigationService";
+import newsletterService from "@/services/newsletterService";
 
 /* ─────────────────────────────────────────────
    Reference-exact fallback columns
@@ -55,6 +56,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [col1, setCol1] = useState<NavLink[]>(DEFAULT_COL1);
   const [col2, setCol2] = useState<NavLink[]>(DEFAULT_COL2);
 
@@ -91,11 +93,26 @@ const Footer = () => {
     load();
   }, []);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
+    if (!email.trim()) return;
+
+    setIsLoading(true);
+    try {
+      await newsletterService.subscribe(email.trim());
       setSubmitted(true);
       setEmail("");
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
+    } catch (error: any) {
+      const errorMessage =
+        error.message || "An error occurred. Please try again later.";
+      alert(errorMessage);
+      console.error("Newsletter subscription error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -135,13 +152,22 @@ const Footer = () => {
               />
               <button
                 type="submit"
+                disabled={isLoading}
                 className="
                   mt-5 sm:mt-0 sm:ml-8 px-8 py-2.5
                   bg-primary text-white text-xs font-black tracking-[0.18em] uppercase
                   rounded-full hover:bg-primary/90 active:scale-95 transition-all
+                  disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-primary
                 "
               >
-                Sign Up
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="inline-block animate-spin">⏳</span>
+                    Subscribing...
+                  </span>
+                ) : (
+                  "Sign Up"
+                )}
               </button>
             </form>
           )}

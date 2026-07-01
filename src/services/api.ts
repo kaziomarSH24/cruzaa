@@ -16,8 +16,8 @@ const isLocal =
 //   ? "http://localhost:8000/backend"
 //   : "https://www.cruzaa.com/backend";
 export const API_BASE_URL = isLocal
-  ? "http://localhost:8000/backend"
-  : "http://localhost:8000/backend";
+  ? "https://c-api.kaziomar.me/"
+  : "https://c-api.kaziomar.me/";
 
 // Create axios instance with default config
 export const api = axios.create({

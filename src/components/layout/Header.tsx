@@ -94,6 +94,11 @@ const Header = () => {
     navigate("/");
   };
 
+  const navigattionHandeler = (item) => {
+    navigate(item);
+
+  }
+
   const isHomePage = location.pathname === "/";
 
   const linkClass = (scrolled: boolean, home: boolean) =>
@@ -114,7 +119,8 @@ const Header = () => {
       >
         {hasChildren ? (
           <div className="flex items-center">
-            <button
+            <button  
+              onClick={()=>navigattionHandeler(item.href)}
               className={`flex items-center gap-1 px-0 py-2 transition-all duration-300 font-bold tracking-tight text-xs lg:text-sm ${linkClass(isScrolled, isHomePage)} ${level > 0 ? "w-full justify-between px-4 py-3 hover:bg-secondary/50 text-xs" : "link-underline mx-3 sm:mx-4"}`}
             >
               {item.name}

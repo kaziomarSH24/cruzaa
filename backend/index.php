@@ -6,6 +6,7 @@ $allowed_origins = [
     'https://www.cruzaa.com',
     'https://cruzaav2.kaziomar.me',
     'http://localhost:8000',
+    'https://c-api.kaziomar.me/'
 ];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
@@ -181,6 +182,27 @@ try {
                 else if ($method === 'DELETE')
                     $controller->delete($id);
             }
+        }
+    }
+
+    // NEWSLETTER ROUTES
+    else if ($parts[0] === 'newsletter') {
+        $controller = new NewsletterController();
+        switch ($parts[1] ?? '') {
+            case 'subscribe':
+                if ($method === 'POST')
+                    $controller->subscribe();
+                break;
+            case 'unsubscribe':
+                if ($method === 'POST')
+                    $controller->unsubscribe();
+                break;
+            case 'subscribers':
+                if ($method === 'GET')
+                    $controller->getSubscribers();
+                break;
+            default:
+                Response::notFound();
         }
     }
 

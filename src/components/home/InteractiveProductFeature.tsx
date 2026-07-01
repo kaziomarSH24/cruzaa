@@ -157,7 +157,7 @@ const InteractiveProductFeature = () => {
                             className="space-y-6"
                         >
                             <div>
-                                <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase block mb-3">
+                                <span className="text-primary font-bold tracking-[0.2em] text-xl uppercase block mb-3">
                                     {content.badge || "100% ELECTRIC"}
                                 </span>
 
@@ -172,7 +172,7 @@ const InteractiveProductFeature = () => {
                                             onChange={handleColorChange}
                                             className="bg-white text-black text-[10px] md:text-[11px] font-black px-8 py-2.5 rounded-full tracking-[0.1em] uppercase appearance-none cursor-pointer focus:outline-none border-none pr-12 shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:bg-gray-100 transition-all duration-300"
                                         >
-                                            <option value="" disabled>Select a color</option>
+                                            <option value="" disabled>Select a colour</option>
                                             <option value="/product/the-cruzaa-e-scooter-carbon-black-sale">Carbon Black</option>
                                             <option value="/product/the-cruzaa-limited-edition-denim-blue-sale">Denim Blue</option>
                                             <option value="/product/the-cruzaa-limited-edition-magno-green-sale">Magno Green</option>

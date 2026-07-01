@@ -152,7 +152,8 @@ class ProductController
         $productId = $product['id'];
         $product['images'] = $this->getProductImages($productId);
         $product['featured_image_url'] = FileUpload::getUrl($product['featured_image']);
-        $product['specs'] = $product['specs'] ? json_decode($product['specs'], true) : [];
+        $rawSpecs = $product['specs'] ? json_decode($product['specs'], true) : [];
+        $product['specs'] = $this->sortProductSpecs($rawSpecs);
         $product['colors'] = $product['colors'] ? json_decode($product['colors'], true) : [];
         $product['features'] = $product['features'] ?? [];
 
@@ -588,5 +589,52 @@ class ProductController
         $stmt->bindParam(':user_agent', $userAgent);
 
         $stmt->execute();
+    }
+
+    /**
+     * Helper: Sort product specs based on a predefined desired order
+     */
+    private function sortProductSpecs($specsArray)
+    {
+        if (!is_array($specsArray) || empty($specsArray)) {
+            return [];
+        }
+
+        // Define the desired order
+        $desiredOrder = [
+            'Top Speed',
+            'Max Range',
+            'Wheel Size',
+            'Charge Time',
+            'Power Assist',
+            'Rated Power',
+            'Water Resistant',
+            'Total Weight',
+            'Max Loading',
+            'Display',
+            'Bluetooth',
+            'Battery',
+            'Gears',
+            'Brakes',
+            'Suspension'
+        ];
+
+        $sortedSpecs = [];
+
+        // Add keys that exist in the desired order
+        foreach ($desiredOrder as $key) {
+            if (array_key_exists($key, $specsArray)) {
+                $sortedSpecs[$key] = $specsArray[$key];
+            }
+        }
+
+        // Append any remaining keys that were not in the predefined list
+        foreach ($specsArray as $key => $value) {
+            if (!array_key_exists($key, $sortedSpecs)) {
+                $sortedSpecs[$key] = $value;
+            }
+        }
+
+        return $sortedSpecs;
     }
 }

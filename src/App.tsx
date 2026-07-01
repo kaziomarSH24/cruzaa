@@ -51,6 +51,7 @@ import SettingsPage from "./pages/admin/SettingsPage";
 import ProfilePage from "./pages/admin/ProfilePage";
 import FAQManagementPage from "./pages/admin/FAQManagementPage";
 import TestimonialManagementPage from "./pages/admin/TestimonialManagementPage";
+import NewsletterManagementPage from "./pages/admin/NewsletterManagementPage";
 import PagesManagementPage from "./pages/admin/PagesManagementPage";
 import DynamicPage from "./pages/DynamicPage";
 
@@ -61,7 +62,9 @@ const App = () => (
     <TooltipProvider>
       <CartProvider>
         <UserAuthProvider>
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <BrowserRouter
+            future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+          >
             <AdminAuthProvider>
               <TrackingPixels />
               <DynamicMeta />
@@ -71,17 +74,29 @@ const App = () => (
                 {/* Public Store Routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
-                <Route path="/e-scooters" element={<Products defaultCategory="e-scooters" />} />
-                <Route path="/e-byke" element={<Products defaultCategory="e-byke" />} />
-                <Route path="/cruzaa-scoota" element={<Products defaultCategory="cruzaa-scoota" />} />
+                <Route
+                  path="/e-scooters"
+                  element={<Products defaultCategory="e-scooters" />}
+                />
+                <Route
+                  path="/e-byke"
+                  element={<Products defaultCategory="e-byke" />}
+                />
+                <Route
+                  path="/cruzaa-scoota"
+                  element={<Products defaultCategory="cruzaa-scoota" />}
+                />
                 <Route path="/:slug" element={<DynamicPage />} />
-            
+
                 <Route path="/product/:slug" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/order-success" element={<OrderSuccess />} />
                 <Route path="/our-story" element={<About />} />
-                <Route path="/about" element={<Navigate to="/our-story" replace />} />
+                <Route
+                  path="/about"
+                  element={<Navigate to="/our-story" replace />}
+                />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/stripe-test" element={<StripeDiagnostics />} />
@@ -92,9 +107,15 @@ const App = () => (
                 <Route path="/account/orders" element={<AccountOrders />} />
                 <Route path="/account/orders/:id" element={<OrderDetail />} />
                 <Route path="/account/profile" element={<AccountProfile />} />
-                <Route path="/account/addresses" element={<AccountAddresses />} />
+                <Route
+                  path="/account/addresses"
+                  element={<AccountAddresses />}
+                />
                 <Route path="/account/payment" element={<AccountPayment />} />
-                <Route path="/account/notifications" element={<AccountNotifications />} />
+                <Route
+                  path="/account/notifications"
+                  element={<AccountNotifications />}
+                />
                 <Route path="/account/security" element={<AccountSecurity />} />
 
                 {/* Admin Auth */}
@@ -104,27 +125,73 @@ const App = () => (
                 <Route element={<ProtectedAdminRoute />}>
                   <Route element={<AdminLayout />}>
                     <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/admin/products" element={<ProductListPage />} />
-                    <Route path="/admin/products/create" element={<ProductFormPage />} />
-                    <Route path="/admin/products/edit/:id" element={<ProductFormPage />} />
-                    <Route path="/admin/categories" element={<CategoryManagementPage />} />
-                    <Route path="/admin/contacts" element={<ContactManagementPage />} />
-                    <Route path="/admin/content" element={<ContentManagementPage />} />
-                    <Route path="/admin/navigation" element={<NavigationManagementPage />} />
-                    <Route path="/admin/users" element={<UserManagementPage />} />
-                    <Route path="/admin/orders" element={<OrderManagementPage />} />
-                    <Route path="/admin/slider" element={<SliderManagementPage />} />
-                    <Route path="/admin/payments" element={<PaymentMethodsPage />} />
+                    <Route
+                      path="/admin/products"
+                      element={<ProductListPage />}
+                    />
+                    <Route
+                      path="/admin/products/create"
+                      element={<ProductFormPage />}
+                    />
+                    <Route
+                      path="/admin/products/edit/:id"
+                      element={<ProductFormPage />}
+                    />
+                    <Route
+                      path="/admin/categories"
+                      element={<CategoryManagementPage />}
+                    />
+                    <Route
+                      path="/admin/contacts"
+                      element={<ContactManagementPage />}
+                    />
+                    <Route
+                      path="/admin/newsletter"
+                      element={<NewsletterManagementPage />}
+                    />
+                    <Route
+                      path="/admin/content"
+                      element={<ContentManagementPage />}
+                    />
+                    <Route
+                      path="/admin/navigation"
+                      element={<NavigationManagementPage />}
+                    />
+                    <Route
+                      path="/admin/users"
+                      element={<UserManagementPage />}
+                    />
+                    <Route
+                      path="/admin/orders"
+                      element={<OrderManagementPage />}
+                    />
+                    <Route
+                      path="/admin/slider"
+                      element={<SliderManagementPage />}
+                    />
+                    <Route
+                      path="/admin/payments"
+                      element={<PaymentMethodsPage />}
+                    />
                     <Route path="/admin/faqs" element={<FAQManagementPage />} />
-                    <Route path="/admin/testimonials" element={<TestimonialManagementPage />} />
-                    <Route path="/admin/pages" element={<PagesManagementPage />} />
+                    <Route
+                      path="/admin/testimonials"
+                      element={<TestimonialManagementPage />}
+                    />
+                    <Route
+                      path="/admin/pages"
+                      element={<PagesManagementPage />}
+                    />
                     <Route path="/admin/settings" element={<SettingsPage />} />
                     <Route path="/admin/profile" element={<ProfilePage />} />
                   </Route>
                 </Route>
 
                 {/* Global Redirects */}
-                <Route path="/admin-panel" element={<Navigate to="/admin" replace />} />
+                <Route
+                  path="/admin-panel"
+                  element={<Navigate to="/admin" replace />}
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AdminAuthProvider>
