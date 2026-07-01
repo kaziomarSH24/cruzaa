@@ -17,6 +17,7 @@ import {
   Globe,
   Bell,
   Code,
+  Shield,
 } from "lucide-react";
 import {
   Card,
@@ -185,6 +186,12 @@ export default function SettingsPage() {
               className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:shadow-sm whitespace-nowrap"
             >
               <ShoppingBag className="w-4 h-4" /> Shopping
+            </TabsTrigger>
+            <TabsTrigger
+              value="security"
+              className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:shadow-sm whitespace-nowrap"
+            >
+              <Shield className="w-4 h-4" /> Security
             </TabsTrigger>
             <TabsTrigger
               value="custom"
@@ -620,6 +627,46 @@ export default function SettingsPage() {
                       </p>
                     </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="security" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>reCAPTCHA Protection</CardTitle>
+                <CardDescription>
+                  Protect forms from bots and spam submissions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-2">
+                  <Label>reCAPTCHA Site Key</Label>
+                  <Input
+                    value={settings.recaptcha_site_key}
+                    onChange={(e) =>
+                      handleChange("recaptcha_site_key", e.target.value)
+                    }
+                    placeholder="6LfKAz8tAAAAAL..."
+                  />
+                  <p className="text-[10px] text-slate-400">
+                    Get from console.cloud.google.com/security/recaptcha
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label>reCAPTCHA Secret Key</Label>
+                  <Input
+                    type="password"
+                    value={settings.recaptcha_secret_key}
+                    onChange={(e) =>
+                      handleChange("recaptcha_secret_key", e.target.value)
+                    }
+                    placeholder="6LfKAz8tAAAAAK..."
+                  />
+                  <p className="text-[10px] text-slate-400">
+                    Keep this secret! Used for server-side verification only
+                  </p>
                 </div>
               </CardContent>
             </Card>

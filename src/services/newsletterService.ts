@@ -6,9 +6,14 @@ class NewsletterService {
    */
   async subscribe(
     email: string,
+    recaptchaToken?: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.post("/newsletter/subscribe", { email });
+      const payload: any = { email };
+      if (recaptchaToken) {
+        payload.recaptcha_token = recaptchaToken;
+      }
+      const response = await api.post("/newsletter/subscribe", payload);
       return {
         success: true,
         message: response.data.message || "Subscribed successfully",

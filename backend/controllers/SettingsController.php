@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Settings Controller - SMTP, SEO, Stripe, Cart, and General Settings
  */
@@ -84,6 +85,27 @@ class SettingsController
     }
 
     /**
+     * Get public settings (no auth required)
+     * Used for frontend-accessible settings like reCAPTCHA site key
+     */
+    public function getPublic()
+    {
+        $stmt = $this->db->prepare(
+            "SELECT setting_key, setting_value FROM settings 
+             WHERE setting_key IN ('recaptcha_site_key', 'site_name', 'site_tagline', 'contact_email')"
+        );
+        $stmt->execute();
+        $settings = $stmt->fetchAll();
+
+        $result = [];
+        foreach ($settings as $setting) {
+            $result[$setting['setting_key']] = $setting['setting_value'];
+        }
+
+        Response::success($result);
+    }
+
+    /**
      * Update settings (bulk or single)
      */
     public function update()
@@ -146,7 +168,6 @@ class SettingsController
             $this->logActivity($user['id'], 'update_settings', 'settings', null);
 
             Response::success(null, 'Settings updated successfully');
-
         } catch (Exception $e) {
             $this->db->rollBack();
             Response::serverError('Failed to update settings: ' . $e->getMessage());
@@ -231,7 +252,6 @@ class SettingsController
             }
 
             Response::success(null, 'SMTP configuration is valid (test email not sent in demo)');
-
         } catch (Exception $e) {
             Response::error('SMTP test failed: ' . $e->getMessage(), 400);
         }

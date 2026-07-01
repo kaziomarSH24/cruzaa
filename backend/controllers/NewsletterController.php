@@ -40,6 +40,14 @@ class NewsletterController
             return;
         }
 
+        // Verify reCAPTCHA token if provided
+        if (isset($data->recaptcha_token) && !empty($data->recaptcha_token)) {
+            if (!$this->verifyRecaptcha($data->recaptcha_token)) {
+                Response::error('reCAPTCHA verification failed', 400);
+                return;
+            }
+        }
+
         try {
             // Check if already subscribed
             $checkSql = "SELECT id, status FROM {$this->table} WHERE email = ?";
@@ -81,6 +89,60 @@ class NewsletterController
         } catch (Exception $e) {
             error_log("Newsletter subscription error: " . $e->getMessage());
             Response::error('Subscription failed', 500);
+        }
+    }
+
+    /**
+     * Verify reCAPTCHA token
+     */
+    private function verifyRecaptcha($token)
+    {
+        try {
+            // Get reCAPTCHA secret key from settings table
+            $settingsSql = "SELECT setting_value FROM settings WHERE setting_key = 'recaptcha_secret_key'";
+            $settingsStmt = $this->conn->prepare($settingsSql);
+            $settingsStmt->execute();
+            $secretResult = $settingsStmt->fetch();
+
+            if (!$secretResult || empty($secretResult['setting_value'])) {
+                // If secret key not configured, skip verification
+                return true;
+            }
+
+            $secretKey = $secretResult['setting_value'];
+
+            // Send token to Google for verification
+            $response = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                    'content' => http_build_query([
+                        'secret' => $secretKey,
+                        'response' => $token
+                    ])
+                ]
+            ]));
+
+            $result = json_decode($response, true);
+
+            // reCAPTCHA v3 returns a score (0.0 to 1.0), higher is better
+            // For v2, it just returns success: true/false
+            if ($result && isset($result['success']) && $result['success']) {
+                // For v3, also check score (0.5 is a reasonable threshold)
+                if (isset($result['score']) && $result['score'] >= 0.5) {
+                    return true;
+                } elseif (!isset($result['score'])) {
+                    // v2 checkbox doesn't return score
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (Exception $e) {
+            error_log("reCAPTCHA verification error: " . $e->getMessage());
+            // If verification fails, allow the subscription to go through
+            // (reCAPTCHA is a security measure, not a blocker)
+            return true;
         }
     }
 

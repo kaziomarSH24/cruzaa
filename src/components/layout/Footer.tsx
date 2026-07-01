@@ -1,8 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import navigationService from "@/services/navigationService";
 import newsletterService from "@/services/newsletterService";
+
+/* ─────────────────────────────────────────────
+   reCAPTCHA Setup
+───────────────────────────────────────────── */
+declare global {
+  interface Window {
+    grecaptcha: any;
+  }
+}
 
 /* ─────────────────────────────────────────────
    Reference-exact fallback columns
@@ -59,6 +68,46 @@ const Footer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [col1, setCol1] = useState<NavLink[]>(DEFAULT_COL1);
   const [col2, setCol2] = useState<NavLink[]>(DEFAULT_COL2);
+  const recaptchaRef = useRef<HTMLDivElement>(null);
+  const [siteKey, setSiteKey] = useState<string>("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string>("");
+
+  /* ── Load reCAPTCHA script and site key ── */
+  useEffect(() => {
+    // Load site key from public settings endpoint
+    const loadSiteKey = async () => {
+      try {
+        const response = await fetch("/api/settings/public");
+        const data = await response.json();
+        const key = data?.data?.recaptcha_site_key;
+        if (key) {
+          setSiteKey(key);
+          // Load reCAPTCHA script AFTER we have the site key
+          loadRecaptchaScript(key);
+        }
+      } catch (error) {
+        console.error("Failed to load reCAPTCHA site key:", error);
+      }
+    };
+
+    const loadRecaptchaScript = (key: string) => {
+      // Check if script already exists
+      if (window.grecaptcha) {
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = `https://www.google.com/recaptcha/api.js?render=${key}`;
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => {
+        console.error("Failed to load reCAPTCHA script");
+      };
+      document.head.appendChild(script);
+    };
+
+    loadSiteKey();
+  }, []);
 
   /* ── Load footer nav from CMS ── */
   useEffect(() => {
@@ -99,7 +148,33 @@ const Footer = () => {
 
     setIsLoading(true);
     try {
-      await newsletterService.subscribe(email.trim());
+      // Get reCAPTCHA token if available (reCAPTCHA v3 is invisible)
+      let token = "";
+      if (window.grecaptcha && siteKey) {
+        try {
+          token = await window.grecaptcha.execute(siteKey, {
+            action: "subscribe",
+          });
+          setRecaptchaToken(token);
+        } catch (err) {
+          console.error("reCAPTCHA execution failed:", err);
+          // Continue without token if reCAPTCHA fails
+        }
+      }
+      // Submit newsletter with or without token
+      await submitNewsletter(email.trim(), token);
+    } catch (error: any) {
+      const errorMessage =
+        error.message || "An error occurred. Please try again later.";
+      alert(errorMessage);
+      console.error("Newsletter subscription error:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const submitNewsletter = async (email: string, token: string) => {
+    try {
+      await newsletterService.subscribe(email, token);
       setSubmitted(true);
       setEmail("");
       // Reset success message after 5 seconds
@@ -133,43 +208,48 @@ const Footer = () => {
               Thanks for signing up! 🎉
             </p>
           ) : (
-            <form
-              onSubmit={handleSignup}
-              className="flex flex-col sm:flex-row items-center justify-center max-w-lg mx-auto px-4"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="
-                  flex-1 w-full sm:w-auto bg-transparent
-                  border-0 border-b border-white/40 text-white
-                  placeholder:text-white/40 text-sm px-2 py-3
-                  focus:outline-none focus:border-white/80 transition-colors
-                "
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="
-                  mt-5 sm:mt-0 sm:ml-8 px-8 py-2.5
-                  bg-primary text-white text-xs font-black tracking-[0.18em] uppercase
-                  rounded-full hover:bg-primary/90 active:scale-95 transition-all
-                  disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-primary
-                "
+            <div className="flex flex-col items-center gap-4">
+              <form
+                onSubmit={handleSignup}
+                className="flex flex-col sm:flex-row items-center justify-center max-w-lg mx-auto px-4 w-full"
               >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="inline-block animate-spin">⏳</span>
-                    Subscribing...
-                  </span>
-                ) : (
-                  "Sign Up"
-                )}
-              </button>
-            </form>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="
+                    flex-1 w-full sm:w-auto bg-transparent
+                    border-0 border-b border-white/40 text-white
+                    placeholder:text-white/40 text-sm px-2 py-3
+                    focus:outline-none focus:border-white/80 transition-colors
+                  "
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="
+                    mt-5 sm:mt-0 sm:ml-8 px-8 py-2.5
+                    bg-primary text-white text-xs font-black tracking-[0.18em] uppercase
+                    rounded-full hover:bg-primary/90 active:scale-95 transition-all
+                    disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-primary
+                  "
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="inline-block animate-spin">⏳</span>
+                      Subscribing...
+                    </span>
+                  ) : (
+                    "Sign Up"
+                  )}
+                </button>
+              </form>
+              <p className="text-white/40 text-xs mt-2">
+                Protected by reCAPTCHA
+              </p>
+            </div>
           )}
         </div>
       </div>
